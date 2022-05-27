@@ -36,7 +36,7 @@ task("deployPriceFeed", "deploys fxPriceFeed Contract")
 // Go to https://hardhat.org/config/ to learn more
 
 const config: HardhatUserConfig = {
-  solidity: "0.6.12",
+  solidity: "0.8.4",
   defaultNetwork:"hardhat",
   networks: {
     truffle: {

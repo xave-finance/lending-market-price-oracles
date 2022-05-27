@@ -1,16 +1,17 @@
 // SPDX-License-Identifier: MIT
-pragma solidity 0.6.12;
+pragma solidity 0.8.4;
 
-import "@chainlink/contracts/src/v0.6/interfaces/AggregatorV3Interface.sol";
-import "@openzeppelin/contracts/math/SafeMath.sol";
+import "@chainlink/contracts/src/v0.8/interfaces/AggregatorV3Interface.sol";
+import "@openzeppelin/contracts/utils/math/SafeCast.sol";
 
 interface hlpContract {
-    function liquidity() external view returns (uint);
-    function totalSupply() external view returns (uint);
+    function liquidity() external view returns (uint256);
+
+    function totalSupply() external view returns (uint256);
 }
 
 contract hlpPriceFeedOracle {
-    using SafeMath for uint;
+    using SafeCast for uint;
 
     string public priceFeed;
 
@@ -23,7 +24,7 @@ contract hlpPriceFeedOracle {
         hlpContract _baseContract,
         AggregatorV3Interface _quotePriceFeed,
         string memory _priceFeed
-    ) public {
+    ) {
         baseContract = _baseContract;
         quotePriceFeed = _quotePriceFeed;
         priceFeed = _priceFeed;
@@ -34,13 +35,12 @@ contract hlpPriceFeedOracle {
         uint256 _decimals = uint256(10**uint256(decimals));
         uint256 liquidity = baseContract.liquidity();
         uint256 totalSupply = baseContract.totalSupply();
-        uint256 hlp_usd = (totalSupply.mul(_decimals)).div(liquidity);
+        uint256 hlp_usd = (totalSupply*(_decimals))/(liquidity);
 
         (, int256 quotePrice, , , ) = quotePriceFeed.latestRoundData();
         uint8 quoteDecimals = quotePriceFeed.decimals();
         quotePrice = _scaleprice(quotePrice, quoteDecimals, decimals);
-        
-        return ((int256(hlp_usd)*int256(10**18))/quotePrice);
+        return ((hlp_usd.toInt256()) * ((uint256(10**18)).toInt256())) / (quotePrice);
     }
 
     function _scaleprice(
@@ -49,9 +49,13 @@ contract hlpPriceFeedOracle {
         uint8 _decimals
     ) internal pure returns (int256) {
         if (_priceDecimals < _decimals) {
-            return _price * int256(10**uint256(_decimals - _priceDecimals));
+            return
+                _price *
+                ((10**(uint256(_decimals - _priceDecimals))).toInt256());
         } else if (_priceDecimals > _decimals) {
-            return _price / int256(10**uint256(_priceDecimals - _decimals));
+            return
+                _price /
+                ((10**(uint256(_priceDecimals - _decimals))).toInt256());
         }
         return _price;
     }
