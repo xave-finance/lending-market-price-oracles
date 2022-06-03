@@ -31,7 +31,7 @@ contract hlpPriceFeedOracle {
         decimals = 18;
     }
 
-    function latestAnswer() public view returns (int256) {
+    function latestAnswer() external view returns (int256) {
         uint256 _decimals = uint256(10**uint256(decimals));
         uint256 liquidity = baseContract.liquidity();
         uint256 totalSupply = baseContract.totalSupply();
