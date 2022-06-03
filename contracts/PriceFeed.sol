@@ -1,9 +1,13 @@
 // SPDX-License-Identifier: MIT
-pragma solidity 0.6.12;
+pragma solidity 0.8.4;
 
-import "@chainlink/contracts/src/v0.6/interfaces/AggregatorV3Interface.sol";
+import "@chainlink/contracts/src/v0.8/interfaces/AggregatorV3Interface.sol";
+import "@openzeppelin/contracts/utils/math/SafeCast.sol";
+
 
 contract fxPriceFeed {
+    using SafeCast for uint;
+
     string public priceFeed;
 
     AggregatorV3Interface public basePriceFeed;
@@ -15,15 +19,15 @@ contract fxPriceFeed {
         AggregatorV3Interface _basePriceFeed,
         AggregatorV3Interface _quotePriceFeed,
         string memory _priceFeed
-    ) public {
+    ) {
         basePriceFeed = _basePriceFeed;
         quotePriceFeed = _quotePriceFeed;
         priceFeed = _priceFeed;
         decimals = 18;
     }
 
-    function latestAnswer() public view returns (int256) {
-        int256 _decimals = int256(10**uint256(decimals));
+    function latestAnswer() external view returns (int256) {
+        int256 _decimals = (10**(uint256(decimals))).toInt256();
         (, int256 basePrice, , , ) = basePriceFeed.latestRoundData();
         uint8 baseDecimals = basePriceFeed.decimals();
 
@@ -42,9 +46,9 @@ contract fxPriceFeed {
         uint8 _decimals
     ) internal pure returns (int256) {
         if (_priceDecimals < _decimals) {
-            return _price * int256(10**uint256(_decimals - _priceDecimals));
+            return _price * ((10**(uint256(_decimals - _priceDecimals))).toInt256());
         } else if (_priceDecimals > _decimals) {
-            return _price / int256(10**uint256(_priceDecimals - _decimals));
+            return _price / ((10**(uint256(_priceDecimals - _decimals))).toInt256());
         }
         return _price;
     }
