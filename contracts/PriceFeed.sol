@@ -26,7 +26,7 @@ contract fxPriceFeed {
         decimals = 18;
     }
 
-    function latestAnswer() public view returns (int256) {
+    function latestAnswer() external view returns (int256) {
         int256 _decimals = (10**(uint256(decimals))).toInt256();
         (, int256 basePrice, , , ) = basePriceFeed.latestRoundData();
         uint8 baseDecimals = basePriceFeed.decimals();
