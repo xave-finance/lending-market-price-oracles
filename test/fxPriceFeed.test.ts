@@ -346,3 +346,118 @@ describe("fxPriceFeed: AUD_ETH Arbitrum", () => {
 		expect(derivedPrice.eq(calculatedPrice)).to.true;
 	});
 });
+describe("fxPriceFeed: USDC_ETH Arbitrum", () => {
+	let contractString = "USDC_ETH";
+	let accounts;
+	let USDC_USDPriceFeedAddress = "0x50834F3163758fcC1Df9973b6e91f0F0F0434aD3";
+	let ETH_USDPriceFeedAddress = "0x639Fe6ab55C921f74e7fac1ee960C0B6293ba612";
+	let USDC_USDPriceContract;
+	let ETH_USDPriceContract;
+	let fxPriceFeedContract;
+
+	before("", async () => {
+		await ethers.provider.send("hardhat_reset", [
+			{
+				forking: {
+					jsonRpcUrl:
+						process.env.ARBITRUM_URL
+				},
+			},
+		]);
+		accounts = await ethers.getSigners();
+		USDC_USDPriceContract = await ethers.getContractAt(
+			"AggregatorV3Interface",
+			USDC_USDPriceFeedAddress
+		);
+		ETH_USDPriceContract = await ethers.getContractAt(
+			"AggregatorV3Interface",
+			ETH_USDPriceFeedAddress
+		);
+	});
+
+	beforeEach("", async () => {
+		let fxPriceFeedFactory = await ethers.getContractFactory(
+			"fxPriceFeed",
+			accounts[0]
+		);
+
+		fxPriceFeedContract = await fxPriceFeedFactory.deploy(
+			USDC_USDPriceFeedAddress,
+			ETH_USDPriceFeedAddress,
+			contractString
+		);
+	});
+
+	it("returns decimals", async () => {
+		expect(await fxPriceFeedContract.decimals()).to.equal(18);
+	});
+
+	it("computes the price appropriately", async () => {
+		let basePrice = (await USDC_USDPriceContract.latestRoundData()).answer;
+		let quotePrice = (await ETH_USDPriceContract.latestRoundData()).answer;
+		let derivedPrice = await fxPriceFeedContract.latestAnswer();
+		let derivedDecimals = await fxPriceFeedContract.decimals();
+		const calculatedPrice = basePrice
+			.mul(BigNumber.from(10).pow(derivedDecimals))
+			.div(quotePrice);
+		expect(derivedPrice.eq(calculatedPrice)).to.true;
+	});
+});
+
+describe("fxPriceFeed: USDT_ETH Arbitrum", () => {
+	let contractString = "USDT_ETH";
+	let accounts;
+	let USDT_USDPriceFeedAddress = "0x3f3f5dF88dC9F13eac63DF89EC16ef6e7E25DdE7";
+	let ETH_USDPriceFeedAddress = "0x639Fe6ab55C921f74e7fac1ee960C0B6293ba612";
+	let USDT_USDPriceContract;
+	let ETH_USDPriceContract;
+	let fxPriceFeedContract;
+
+	before("", async () => {
+		await ethers.provider.send("hardhat_reset", [
+			{
+				forking: {
+					jsonRpcUrl:
+						process.env.ARBITRUM_URL
+				},
+			},
+		]);
+		accounts = await ethers.getSigners();
+		USDT_USDPriceContract = await ethers.getContractAt(
+			"AggregatorV3Interface",
+			USDT_USDPriceFeedAddress
+		);
+		ETH_USDPriceContract = await ethers.getContractAt(
+			"AggregatorV3Interface",
+			ETH_USDPriceFeedAddress
+		);
+	});
+
+	beforeEach("", async () => {
+		let fxPriceFeedFactory = await ethers.getContractFactory(
+			"fxPriceFeed",
+			accounts[0]
+		);
+
+		fxPriceFeedContract = await fxPriceFeedFactory.deploy(
+			USDT_USDPriceFeedAddress,
+			ETH_USDPriceFeedAddress,
+			contractString
+		);
+	});
+
+	it("returns decimals", async () => {
+		expect(await fxPriceFeedContract.decimals()).to.equal(18);
+	});
+
+	it("computes the price appropriately", async () => {
+		let basePrice = (await USDT_USDPriceContract.latestRoundData()).answer;
+		let quotePrice = (await ETH_USDPriceContract.latestRoundData()).answer;
+		let derivedPrice = await fxPriceFeedContract.latestAnswer();
+		let derivedDecimals = await fxPriceFeedContract.decimals();
+		const calculatedPrice = basePrice
+			.mul(BigNumber.from(10).pow(derivedDecimals))
+			.div(quotePrice);
+		expect(derivedPrice.eq(calculatedPrice)).to.true;
+	});
+});

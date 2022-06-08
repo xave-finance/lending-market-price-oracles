@@ -28,12 +28,18 @@ export async function deploy(network_name, fxCurrency, hre) {
       "AUD": {
         "baseContract": "0x9854e9a850e7C354c1de177eA953a6b1fba8Fc22",
         "quoteContract": "0x639Fe6ab55C921f74e7fac1ee960C0B6293ba612"
+      },
+      "USDC": {
+        "baseContract": "0x50834F3163758fcC1Df9973b6e91f0F0F0434aD3",
+        "quoteContract": "0x639Fe6ab55C921f74e7fac1ee960C0B6293ba612"
+      },
+      "USDT": {
+        "baseContract": "0x3f3f5dF88dC9F13eac63DF89EC16ef6e7E25DdE7",
+        "quoteContract": "0x639Fe6ab55C921f74e7fac1ee960C0B6293ba612"
       }
     }
   }
   const fxPriceFeedFactory = await hre.ethers.getContractFactory("fxPriceFeed");
-  // const estimatedGas = await fxPriceFeedFactory.signer.provider.estimateGas(fxPriceFeedFactory.getDeployTransaction(networks[network_name][fxCurrency].baseContract,networks[network_name][fxCurrency].quoteContract,`${fxCurrency}_ETH`).data)
-  // console.log(await fxPriceFeedFactory.signer.getBalance());
   const fxPriceFeedContract = await fxPriceFeedFactory.deploy(
     networks[network_name][fxCurrency].baseContract,
     networks[network_name][fxCurrency].quoteContract,

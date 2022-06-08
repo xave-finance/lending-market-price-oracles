@@ -50,7 +50,7 @@ const config: HardhatUserConfig = {
       url: process.env.MATIC_URL,
       accounts: [process.env.PRIVATE_KEY]
     },
-    Arbitrum: {
+    arbitrum: {
       url: process.env.ARBITRUM_URL,
       accounts: [process.env.PRIVATE_KEY]
     },
