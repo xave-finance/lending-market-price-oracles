@@ -1,4 +1,12 @@
+import { LedgerSigner } from '@anders-t/ethers-ledger'
+const IS_LEDGER_SIGNER = true
+const LEDGER_ACCOUNT_PATH = "44'/60'/0'/0/0"
+
 export async function deploy(network_name, fxCurrency, hre) {
+  const ERC20 = await hre.ethers.getContractFactory('MockToken')
+  const provider = ERC20.signer.provider
+  const signer = IS_LEDGER_SIGNER ? await new LedgerSigner(provider, LEDGER_ACCOUNT_PATH) : ERC20.signer
+
   const networks = {
     "mainnet": {
       "SGD": {
@@ -40,7 +48,7 @@ export async function deploy(network_name, fxCurrency, hre) {
     }
   }
   const fxPriceFeedFactory = await hre.ethers.getContractFactory("fxPriceFeed");
-  const fxPriceFeedContract = await fxPriceFeedFactory.deploy(
+  const fxPriceFeedContract = await fxPriceFeedFactory.connect(signer).deploy(
     networks[network_name][fxCurrency].baseContract,
     networks[network_name][fxCurrency].quoteContract,
     `${fxCurrency}_ETH`
