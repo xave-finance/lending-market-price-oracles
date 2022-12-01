@@ -21,7 +21,7 @@ task("accounts", "Prints the list of accounts", async (taskArgs, hre) => {
 task("deployHLPOracle", "deploys HLPPriceFeedOracle Contract")
   .addParam("networkName", "Provide the name of the network to which the contract must be deployed")
   .setAction(async (taskArgs, hre) => {
-    await deployHLPOracle.deploy(taskArgs.networkName, hre);
+    await deployHLPOracle.deploy(taskArgs.networkName, taskArgs.fxCurrency, hre);
   });
 
 task("deployPriceFeed", "deploys fxPriceFeed Contract")
@@ -37,7 +37,7 @@ task("deployPriceFeed", "deploys fxPriceFeed Contract")
 
 const config: HardhatUserConfig = {
   solidity: "0.8.4",
-  defaultNetwork:"hardhat",
+  defaultNetwork: "hardhat",
   networks: {
     truffle: {
       url: "http://localhost:24012/rpc"
