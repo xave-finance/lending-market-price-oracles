@@ -21,8 +21,8 @@ contract hlpPriceFeedOracle {
     uint8 public decimals;
 
     constructor(
-        hlpContract _baseContract,
-        AggregatorV3Interface _quotePriceFeed,
+        hlpContract _baseContract, // FXPool (or in previous versions the HLP / Curve contract)
+        AggregatorV3Interface _quotePriceFeed, // ETH / USD Chainlink price feed
         string memory _priceFeed
     ) {
         baseContract = _baseContract;
